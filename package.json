@@ -1,0 +1,21 @@
+{
+  "name": "web-training",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.46.1",
+    "@slidev/theme-bricks": "^0.0.2",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "slidev-theme-academic": "^1.1.3",
+    "slidev-theme-mokkapps": "^1.3.2"
+  },
+  "devDependencies": {
+    "@iconify-json/logos": "^1.1.41"
+  }
+}
