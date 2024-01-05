@@ -373,3 +373,152 @@ export const Component = () => {
   }, []);
 };
 ```
+
+---
+
+# Context
+
+- Context lets the parent component make some information available to any component in the tree below it—no matter how deep—without passing it explicitly through props.
+
+---
+
+# Theme Provider - context
+
+```jsx
+const ThemeContext = createContext({
+  primary: '#fff',
+  secondary: '#000',
+});
+
+const App = () => {
+  return (
+    <ThemeContext.Provider
+      value={{
+        primary: '#fff',
+        secondary: '#000',
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+const Button = () => {
+  const theme = useContext(ThemeContext);
+  return (
+    <button
+      style={{
+        background: theme.primary,
+        color: theme.secondary,
+      }}
+    >
+      Click Me
+    </button>
+  );
+};
+```
+
+---
+
+Complex Provider
+
+```jsx
+import { createContext, useContext, useState } from 'react';
+
+const ThemeContext = createContext({
+  theme: {
+    primary: '#000',
+    secondary: '#fff',
+  },
+  toggleTheme: () => {},
+});
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const { theme: defaultTheme } = useContext(ThemeContext);
+  const [theme, setTheme] = useState(defaultTheme);
+
+  const toggleTheme = () => {
+    setTheme({
+      primary: theme.secondary,
+      secondary: theme.primary,
+    });
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+---
+
+# Handling Form
+
+```jsx
+function ContactUsForm() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+  const handleMessageChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setMessage(event.target.value);
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = {
+      email,
+      message,
+    };
+    console.log({ data });
+  };
+  return (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" onChange={handleEmailChange} />
+      <label htmlFor="message">Message</label>
+      <textarea id="message" onChange={handleMessageChange} />
+      <button type="submit">Send</button>
+    </form>
+  );
+}
+
+```
+
+# Custom Hooks
+
+```js
+function useOnlineStatus() {
+  const [isOnline, setIsOnline] = useState(true);
+  useEffect(() => {
+    function handleOnline() {
+      setIsOnline(true);
+    }
+    function handleOffline() {
+      setIsOnline(false);
+    }
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  return isOnline;
+}
+```
+
+---
+
+# Exercise
+
+- Create a react application
+- Create a context provider for global configurations
+- Create a layout which shows menu on side and data on right
+- Fetch users and list them
+- Add search users
