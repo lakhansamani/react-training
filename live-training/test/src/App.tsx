@@ -1,45 +1,48 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { List } from './components/List';
-import { ThemedButton } from './components/Button';
+import { useFetch } from './hooks/fetch';
 
+interface User {
+  id: number;
+  name: string;
+}
 function App() {
-  const [users, setUsers] = useState<string[]>(['User 1', 'User 2']);
-  const [name, setName] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [invoices, seTInvoice] = useState<string[]>([]);
-  const userHeading = 'Users';
+  // fetch users
+  const userInfo = useFetch<User[]>({
+    url: 'https://jsonplaceholder.typicode.com/users',
+    method: 'GET',
+  });
 
-  useEffect(() => {
-    let isComponentMounted = true;
-    // fetch bills
-    setLoading(true);
-    setTimeout(() => {
-      if (isComponentMounted) {
-        setLoading(false);
-        seTInvoice(['Invoice 1', 'Invoice 2']);
-      }
-    }, 2000);
-
-    // clean up
-    return function () {
-      isComponentMounted = false;
-    };
-  }, []);
-
-  const invoiceHeading = 'Invoices';
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setUsers([...users, name]);
-  };
+  // fetch invoices
+  const invoiceInfo = useFetch({
+    url: 'https://jsonplaceholder.typicode.com/invoices',
+    method: 'GET',
+    headers: {
+      'X-platform': 'ios',
+    },
+  });
 
   return (
-    <Fragment>
-      <ThemedButton />
+    <>
+      {userInfo.loading ? (
+        <h1>Loading users...</h1>
+      ) : (
+        <>
+          {userInfo.data && (
+            <ul>
+              {userInfo.data.map((user) => (
+                <li key={user.id}>{user.name}</li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+      {invoiceInfo.loading ? (
+        <h1>Loading invoices...</h1>
+      ) : (
+        <>{JSON.stringify(invoiceInfo.data)}</>
+      )}
+      <div>{userInfo.error && <h1>{userInfo.error}</h1>}</div>
+      <div>{invoiceInfo.error && <h1>{invoiceInfo.error}</h1>}</div>
+      {/* <ThemedButton />
       <h1>Hello World</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>
@@ -48,8 +51,8 @@ function App() {
       </form>
       <List items={users} heading={userHeading} addToList={setUsers} />
       <hr />
-      <List items={invoices} heading={invoiceHeading} loading={loading} />
-    </Fragment>
+      <List items={invoices} heading={invoiceHeading} loading={loading} /> */}
+    </>
   );
 }
 
